@@ -1,0 +1,32 @@
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const arr = ["择校相关/", "数据/","universities/"]
+
+  const hrefSelector = arr
+  .map(s => `[href$="${encodeURI(s)}"]`)
+  .join(', ')
+    const selector =
+      `a:is(${hrefSelector})`;
+    const targetLinks = document.querySelectorAll(selector);
+
+    targetLinks.forEach((link) => {
+      link.removeAttribute("href");
+      link.style.cursor = "pointer";
+      link.addEventListener("click", function (e) {
+        const isToggleButton = e.target.closest(
+          "button, .hextra-sidebar-collapsible-button",
+        );
+        if (!isToggleButton) {
+          // 5. 转发点击给子元素中的 span 或按钮
+          const toggleBtn = link.querySelector(
+            "button, .hextra-sidebar-collapsible-button, span",
+          );
+          if (toggleBtn) {
+            toggleBtn.click();
+            console.log("Hextra: 转发点击至子元素");
+          }
+        }
+      });
+    });
+  });
+</script>

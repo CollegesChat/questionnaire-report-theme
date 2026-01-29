@@ -1,56 +1,71 @@
-# Hugo configuration file
-title: My Site
+# =========================
+# Site information
+# =========================
+title: 大学生活质量指北
+baseURL: https://colleges.chat
+defaultContentLanguage: zh
+languageCode: zh-cn
+hasCJKLanguage: true
+description: 收集全世界各高校招生时不会写明但实实在在影响大学生活质量的详尽信息
 
-# import hextra as module
+# =========================
+# Theme (Hextra)
+# =========================
 module:
   imports:
     - path: github.com/imfing/hextra
 
-markup:
-  # allow raw html
-  goldmark:
-    renderer:
-      unsafe: true
-
-  # enable hextra syntax highlight
-  highlight:
-    noClasses: false
-
-menu:
-  main:
-    - name: Docs
-      pageRef: /docs
-      weight: 1
-    - name: About
-      pageRef: /about
-      weight: 2
-    - name: Contact ↗
-      url: "https://github.com/imfing"
-      weight: 3
-    - name: Search
-      weight: 4
-      params:
-        type: search
-    - name: GitHub
-      weight: 5
-      url: "https://github.com/imfing/hextra-starter-template"
-      params:
-        icon: github
-    - name: Twitter
-      weight: 6
-      url: "https://twitter.com/"
-      params:
-        icon: x-twitter
-
 params:
   navbar:
     displayTitle: true
-    displayLogo: false
+    displayLogo: true
 
   footer:
-    displayCopyright: false
+    displayCopyright: true
     displayPoweredBy: true
+    copyright: |
+      CC BY-NC-SA 4.0 | Generated on {{ now.Format "2006-01-02 15:04" }}
 
+  # GitHub repo（对应 repo_name / repo_url）
+  repo:
+    url: https://github.com/CollegesChat/university-information
+    icon: github
+
+  # 编辑链接（对应 edit_uri）
   editURL:
     enable: true
-    base: "https://github.com/imfing/hextra-starter-template/edit/main/content"
+    base: https://github.com/CollegesChat/university-information/edit/master/questionnaires/site/content
+
+# =========================
+# Menu (Top navbar only)
+# =========================
+menu:
+  main:
+    - name: 首页
+      pageRef: /
+
+    - name: 搜索
+      weight: 90
+      params:
+        type: search
+
+    - name: GitHub
+      weight: 100
+      url: https://github.com/CollegesChat/university-information
+      params:
+        icon: github
+
+# =========================
+# Markdown / Rendering
+# =========================
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    noClasses: false
+
+# =========================
+# Permalinks（对应你原来的 URL 规划）
+# =========================
+
