@@ -1,6 +1,6 @@
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    let arr = ["数据/", "universities/"];
+    let arr = ["数据/", "universities/", "choose-a-college/"];
 
     const hrefSelector = arr.map((s) => `[href$="${encodeURI(s)}"]`).join(", ");
     const selector = `aside a:is(${hrefSelector})`;
@@ -25,7 +25,9 @@
         }
       });
     });
-    arr = arr.filter((item) => item !== "数据/");
+    arr = arr.filter(
+      (item) => item !== "数据/" && item !== "choose-a-college/",
+    );
     const mainHrefSelector = arr
       .map((s) => `[href$="${encodeURI(s)}"]`)
       .join(", ");

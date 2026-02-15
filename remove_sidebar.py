@@ -25,7 +25,8 @@ def process_html_file(file_path):
         file_path.write_text(new_content, encoding='utf-8')
 
         # 输出文件名
-        print(f'处理中: {re.search(NAME_RE, content).group(1)}')
+        if match := NAME_RE.search(content):
+            print(f'处理中: {match.group(1)}')
 
         return cleaned_bytes
     except Exception as e:

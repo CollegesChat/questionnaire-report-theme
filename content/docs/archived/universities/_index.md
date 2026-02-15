@@ -4,4 +4,6 @@ cascade:
   sidebar:
     hide: true
   url: /archived/universities/:slug/
+sidebar:
+  hide: false
 ---
