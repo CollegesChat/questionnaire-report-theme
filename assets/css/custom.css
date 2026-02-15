@@ -1,0 +1,4 @@
+body .hextra-search-wrapper div.hextra-search-prefix,
+body .hextra-search-wrapper div.hextra-search-excerpt {
+  display: none;
+}

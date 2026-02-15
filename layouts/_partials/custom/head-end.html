@@ -1,12 +1,9 @@
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const arr = ["择校相关/", "数据/","universities/"]
+    let arr = ["数据/", "universities/"];
 
-  const hrefSelector = arr
-  .map(s => `[href$="${encodeURI(s)}"]`)
-  .join(', ')
-    const selector =
-      `a:is(${hrefSelector})`;
+    const hrefSelector = arr.map((s) => `[href$="${encodeURI(s)}"]`).join(", ");
+    const selector = `aside a:is(${hrefSelector})`;
     const targetLinks = document.querySelectorAll(selector);
 
     targetLinks.forEach((link) => {
@@ -27,6 +24,18 @@
           }
         }
       });
+    });
+    arr = arr.filter((item) => item !== "数据/");
+    const mainHrefSelector = arr
+      .map((s) => `[href$="${encodeURI(s)}"]`)
+      .join(", ");
+    const mainSelector = `main a:is(${mainHrefSelector})`;
+    const mainTargetLinks = document.querySelectorAll(mainSelector);
+    mainTargetLinks.forEach((link) => {
+      link.removeAttribute("href");
+      link.style.cursor = "not-allowed";
+      link.style.opacity = "0.5";
+      link.title = `没有关于${link.textContent.trim()}的分类，因此被禁用`;
     });
   });
 </script>

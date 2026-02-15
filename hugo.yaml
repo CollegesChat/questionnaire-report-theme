@@ -15,7 +15,16 @@ module:
   imports:
     - path: github.com/imfing/hextra
 
+disableKinds: ["taxonomy", "term","rss"]
+
+minify:
+  minifyOutput: true
+
 params:
+  search:
+    flexsearch:
+      index: title
+      tokenize: forward
   navbar:
     displayTitle: true
     displayLogo: true
@@ -68,4 +77,3 @@ markup:
 # =========================
 # Permalinks（对应你原来的 URL 规划）
 # =========================
-
