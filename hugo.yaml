@@ -43,7 +43,7 @@ params:
   # 编辑链接（对应 edit_uri）
   editURL:
     enable: true
-    base: https://github.com/CollegesChat/university-information/edit/master/questionnaires/site/content
+    base: https://github.com/CollegesChat/university-information/edit/master/questionnaires/results_desensitized.csv#
 
 # =========================
 # Menu (Top navbar only)
