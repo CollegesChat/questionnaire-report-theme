@@ -30,12 +30,7 @@ params:
     displayLogo: true
 
   footer:
-    displayCopyright: true
-    displayPoweredBy: true
-    copyright: |
-      CC BY-NC-SA 4.0 | Generated on {{ now.Format "2006-01-02 15:04" }}
-
-  # GitHub repo（对应 repo_name / repo_url）
+    displayPoweredBy: false
   repo:
     url: https://github.com/CollegesChat/university-information
     icon: github
@@ -43,7 +38,7 @@ params:
   # 编辑链接（对应 edit_uri）
   editURL:
     enable: true
-    base: https://github.com/CollegesChat/university-information/edit/master/questionnaires/results_desensitized.csv#
+    base: https://github.com/CollegesChat/university-information/edit/master/questionnaires/site/
 
 # =========================
 # Menu (Top navbar only)
@@ -74,6 +69,17 @@ markup:
   highlight:
     noClasses: false
 
+outputFormats:
+  SidebarFragment:
+    mediaType: "text/html"
+    baseName: "sidebar" # 最终生成 sidebar.html
+    path: "/" # 输出到 public 根目录
+    isHTML: true
+
+outputs:
+  home:
+    - html
+    - SidebarFragment
 # =========================
 # Permalinks（对应你原来的 URL 规划）
 # =========================

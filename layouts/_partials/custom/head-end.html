@@ -1,5 +1,7 @@
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
+<script id="hextra-sidebar-script">
+  // 1. 将原有的逻辑封装为函数，方便初次加载和侧边栏异步加载后重复调用
+  function initHextraLogic() {
+    console.log("Hextra: 初始化/重新运行链接逻辑");
     let arr = ["数据/", "universities/", "choose-a-college/"];
 
     const hrefSelector = arr.map((s) => `[href$="${encodeURI(s)}"]`).join(", ");
@@ -9,25 +11,30 @@
     targetLinks.forEach((link) => {
       link.removeAttribute("href");
       link.style.cursor = "pointer";
-      link.addEventListener("click", function (e) {
-        const isToggleButton = e.target.closest(
-          "button, .hextra-sidebar-collapsible-button",
-        );
-        if (!isToggleButton) {
-          // 5. 转发点击给子元素中的 span 或按钮
-          const toggleBtn = link.querySelector(
-            "button, .hextra-sidebar-collapsible-button, span",
+
+      // 添加 dataset 标记，防止重复调用时绑定多个点击事件
+      if (!link.dataset.hextraBound) {
+        link.dataset.hextraBound = "true";
+        link.addEventListener("click", function (e) {
+          const isToggleButton = e.target.closest(
+            "button.hextra-sidebar-collapsible-button",
           );
-          if (toggleBtn) {
-            toggleBtn.click();
-            console.log("Hextra: 转发点击至子元素");
+          if (!isToggleButton) {
+            // 兼容按钮是 a 的同级（当前 sidebar 结构）或子级（旧结构）
+            const item = link.closest(".hextra-sidebar-item");
+            const toggleBtn =
+              item?.querySelector("button.hextra-sidebar-collapsible-button") ||
+              link.querySelector("button.hextra-sidebar-collapsible-button");
+            if (toggleBtn) {
+              toggleBtn.click();
+              console.log("Hextra: 转发点击至子元素");
+            }
           }
-        }
-      });
+        });
+      }
     });
-    arr = arr.filter(
-      (item) => item !== "数据/" && item !== "choose-a-college/",
-    );
+
+    arr = ["universities/"];
     const mainHrefSelector = arr
       .map((s) => `[href$="${encodeURI(s)}"]`)
       .join(", ");
@@ -39,5 +46,150 @@
       link.style.opacity = "0.5";
       link.title = `没有关于${link.textContent.trim()}的分类，因此被禁用`;
     });
-  });
+
+    const editPage =
+      document.getElementById("backToTop")?.previousElementSibling;
+    if (editPage) {
+      editPage.href =
+        location.pathname.includes("universities") ||
+        location.pathname.includes("archived/universities")
+          ? "https://github.com/CollegesChat/university-information/edit/master/questionnaires/results_desensitized.csv"
+          : editPage.href.includes("_index.md")
+            ? editPage.href.replace("_index.md", "index.md")
+            : editPage.href;
+    }
+  }
+
+  // 初次加载时触发
+  document.addEventListener("DOMContentLoaded", initHextraLogic);
+
+  // 2. 循环等待元素出现的逻辑（重试5次）
+  function tryLoadSidebar(attemptsLeft) {
+    if (attemptsLeft <= 0) {
+      console.log("[sidebar] nav not found after 5 attempts. Giving up.");
+      return;
+    }
+
+    console.log(`[sidebar] checking for nav... attempts left: ${attemptsLeft}`);
+    const nav = document.querySelector(
+      "body > div.hx\\:mx-auto.hx\\:flex.hextra-max-page-width > nav",
+    );
+
+    if (nav) {
+      const prev = nav.previousElementSibling;
+
+      if (!prev || prev.tagName !== "ASIDE") {
+        console.log("[sidebar] creating floating button");
+
+        const btn = document.createElement("button");
+        btn.textContent = "加载侧边栏";
+
+        // 设置浮动样式，确保始终能点到
+        Object.assign(btn.style, {
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          zIndex: "9999",
+          padding: "10px 16px",
+          backgroundColor: "#007aff",
+          color: "white",
+          border: "none",
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+          cursor: "pointer",
+          fontWeight: "bold",
+        });
+
+        btn.addEventListener("click", async () => {
+          btn.disabled = true;
+          console.log("[sidebar] button clicked");
+
+          try {
+            console.log("[sidebar] fetching sidebar.html");
+            const res = await fetch("/sidebar.html");
+            console.log("[sidebar] fetch status =", res.status);
+            const html = await res.text();
+            console.log("[sidebar] html length =", html.length);
+
+            const aside = document.createElement("aside");
+            aside.innerHTML = html;
+
+            nav.parentNode.insertBefore(aside, nav);
+            console.log("[sidebar] aside inserted");
+
+            btn.remove();
+            const currentPath = decodeURIComponent(window.location.pathname);
+            const activeLink =
+              aside.querySelector(`a[href$="${currentPath}"]`) ||
+              aside.querySelector(
+                `a[href$="${currentPath.replace(/\/$/, "")}"]`,
+              );
+
+            if (activeLink) {
+              // 给当前链接加上激活高亮样式（可选，模拟主题行为）
+              activeLink.classList.add("active");
+              activeLink.style.fontWeight = "bold";
+              activeLink.style.color = "var(--primary-color, #007aff)";
+
+              // 2. 顺藤摸瓜，把它的所有父级目录都展开
+              // Hextra 通常是用包裹的 <li> 加上 "open" 类，或者如果是 <details> 标签就加上 "open" 属性
+              let parent = activeLink.parentElement;
+              while (parent && parent !== aside) {
+                if (parent.tagName === "LI") {
+                  parent.classList.add("open");
+                  // 如果 Hextra 用了按钮来控制，也可以模拟点击
+                  const toggleBtn = parent.querySelector(
+                    ".hextra-sidebar-collapsible-button",
+                  );
+                  if (toggleBtn && !parent.classList.contains("open")) {
+                    toggleBtn.click();
+                  }
+                }
+                // 兼容使用 details/summary 结构的折叠菜单
+                if (parent.tagName === "DETAILS") {
+                  parent.setAttribute("open", "");
+                }
+                parent = parent.parentElement;
+              }
+            } else {
+              console.log("Hextra: 未能在动态侧边栏中找到当前页面的链接");
+            }
+
+            // 3. 修复没绑定上的“点击展开”事件
+            // 让新塞入的目录按钮也能正常点击展开/收起
+            const collapsibleButtons = aside.querySelectorAll(
+              ".hextra-sidebar-collapsible-button, li > button",
+            );
+            collapsibleButtons.forEach((button) => {
+              button.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const li = this.closest("li");
+                if (li) {
+                  li.classList.toggle("open");
+                }
+              });
+            });
+            // 3. 加载完成后，再次运行原本 script 里的业务逻辑
+            initHextraLogic();
+          } catch (e) {
+            console.error("[sidebar] fetch failed:", e);
+          }
+        });
+
+        // 挂载到 body 上以防被其他父级 overflow: hidden 遮挡
+        document.body.appendChild(btn);
+        console.log("[sidebar] floating button inserted");
+      } else {
+        console.log("[sidebar] aside already exists");
+      }
+    } else {
+      console.log("[sidebar] nav not found, retrying in 1 second...");
+      // 等待1秒后重试
+      setTimeout(() => tryLoadSidebar(attemptsLeft - 1), 1000);
+    }
+  }
+
+  // 启动循环检测，设置初始次数为5
+  setTimeout(() => tryLoadSidebar(5), 500);
 </script>

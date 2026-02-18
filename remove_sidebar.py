@@ -1,9 +1,10 @@
+import mmap
 import re
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 # 正则匹配 aside 标签及其内容
-ASIDE_RE = re.compile(r'<aside.*?>.*?</aside>', flags=re.DOTALL)
+ASIDE_RE = re.compile(rb'<aside.*?>.*?</aside>', flags=re.DOTALL)
 NAME_RE = re.compile(
     r'property=\"og:title\" content=\"([\u4e00-\u9fa5\s\(\)]+)\"'
 )  # 提取文件名（不含扩展名）
@@ -12,20 +13,25 @@ NAME_RE = re.compile(
 def process_html_file(file_path):
     """处理单个文件并返回清理的字节数"""
     try:
-        # 读取并计算原始字节
-        content = file_path.read_text(encoding='utf-8')
-        original_byte_size = len(content.encode('utf-8'))
-        # 执行清理并计算新字节
-        new_content = ASIDE_RE.sub('', content)
-        new_byte_size = len(new_content.encode('utf-8'))
+        if file_path.stat().st_size == 0:
+            return 0
 
-        cleaned_bytes = original_byte_size - new_byte_size
+        # mmap 读取，减少高层文本 I/O 与重复编码开销
+        with file_path.open('rb') as f:
+            with mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) as mm:
+                content = mm[:]
 
-        # 写回文件
-        file_path.write_text(new_content, encoding='utf-8')
+        # 字节级替换并直接计算清理量
+        new_content = ASIDE_RE.sub(b'', content)
+        cleaned_bytes = len(content) - len(new_content)
+
+        # 仅在有变化时写回
+        if cleaned_bytes > 0:
+            file_path.write_bytes(new_content)
 
         # 输出文件名
-        if match := NAME_RE.search(content):
+        content_text = content.decode('utf-8', errors='ignore')
+        if match := NAME_RE.search(content_text):
             print(f'处理中: {match.group(1)}')
 
         return cleaned_bytes
@@ -51,7 +57,7 @@ def clean_sidebar(paths_list):
     if not all_html_files:
         print('未发现任何 HTML 文件，程序退出。')
         return
-
+    all_html_files = list(filter(lambda x: '数据/' not in str(x), all_html_files))  # 过滤掉包含“数据”的文件名
     print(f'\n🚀 开始多线程处理共 {len(all_html_files)} 个文件...\n' + '-' * 40)
 
     # 2. 多线程执行
@@ -71,6 +77,6 @@ def clean_sidebar(paths_list):
     print('=' * 40)
 
 
-my_paths = [r'public\archived', r'public\universities']
+my_paths = [r'public/archived', r'public/universities']
 
 clean_sidebar(my_paths)
