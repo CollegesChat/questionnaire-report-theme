@@ -102,8 +102,14 @@ params:
   # (Optional, experimental, default false) Enables a drop-down menu for translations only if a translation is present.
   BookTranslatedOnly: false
   BookSearchConfig:
-    encode: "icase"
-    tokenize: "forward"
+    encoder: "icase"
+    tokenize: "tolerant"
+    document:
+      id: "id"
+      field:
+        - title
+      store:
+        - title
 minify:
   minifyOutput: true
   tdewolff:
