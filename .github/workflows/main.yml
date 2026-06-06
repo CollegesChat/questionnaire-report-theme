@@ -33,10 +33,11 @@ jobs:
       - name: Clone Another Public Repo
         uses: actions/checkout@v4
         with:
-          repository: 'CollegesChat/website-gengerator'
-          path: 'gengerator'
+          repository: 'CollegesChat/website-generator'
+          path: 'generator'
       - name: Build Markdown
         run: |
+          cd generator
           uv sync
           python main.py
           cd ..
