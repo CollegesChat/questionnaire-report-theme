@@ -38,19 +38,20 @@ markup:
 #     weight: 3
 
 menu:
-  home:
-    - name: "Documentation"
-      pageRef: "/docs/"
-      weight: 10
-    - name: "Github"
-      url: "https://github.com/alex-shpak/hugo-book/"
-      weight: 20
+  main:
+    - name: 首页
+      pageRef: /
 
-  # before: []
-  after:
-    - name: "Github"
-      url: "https://github.com/alex-shpak/hugo-book"
-      weight: 10
+    - name: 搜索
+      weight: 90
+      params:
+        type: search
+
+    - name: GitHub
+      weight: 100
+      url: https://github.com/CollegesChat/university-information
+      params:
+        icon: github
 
 taxonomies:
   tag: tags
@@ -58,7 +59,7 @@ taxonomies:
 params:
   # (Optional, default light) Sets color theme: light, dark or auto.
   # Theme 'auto' switches between dark and light modes based on browser/os preferences
-  BookTheme: "light"
+  BookTheme: "auto"
 
   # (Optional, default none) Controls table of contents visibility on right side of pages.
   # Start and end levels can be controlled with markup.tableOfContents setting.
