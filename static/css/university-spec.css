@@ -39,8 +39,28 @@
   }
 }
 
-/* 手机端：通过 JS 动态添加 show-tip 类来显示 */
-.id-link.show-tip::after {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-2px);
+/* 手机端：将 Tooltip 转换为底部固定弹窗（Toast），彻底防溢出 */
+@media (hover: none) {
+  .id-link::after {
+    position: fixed;
+    /* 脱离文本流，改为相对于屏幕视口定位 */
+    bottom: 24px;
+    /* 距离屏幕底部距离 */
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    /* 默认向下偏移 10px，用于入场动画 */
+    white-space: normal;
+    /* 允许长文本在小屏上安全换行 */
+    width: max-content;
+    max-width: 85vw;
+    /* 限制最大宽度为屏幕宽度的 85%，两边留白 */
+    text-align: center;
+  }
+
+  /* 激活显示状态 */
+  .id-link.show-tip::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    /* 向上滑入原位 */
+  }
 }
