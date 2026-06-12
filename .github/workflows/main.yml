@@ -4,6 +4,9 @@ name: Deploy static content to Pages
 on:
   push:
     branches: ["main"]
+    paths-ignore:
+      - 'wrangler.toml'
+      - 'build.sh'
   workflow_dispatch:
 
 permissions:
