@@ -50,6 +50,8 @@ jobs:
         env:
           SITE_DIR: ${{ github.workspace }}
         run: |
+          export LOGURU_LEVEL="WARNING"
+          export LOGURU_COLORIZE=False
           cd generator
           uv sync
           uv run python main.py

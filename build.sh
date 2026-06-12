@@ -92,7 +92,8 @@ main() {
   # 4. 运行 Python 脚本生成 Markdown (此时 uv 会自动命中并在 .cache/uv 下读写缓存)
   echo "Building Markdown files with uv..."
   export SITE_DIR="$(pwd)"
-
+  export LOGURU_LEVEL="WARNING"
+  export LOGURU_COLORIZE=False
   pushd generator > /dev/null
   uv sync
   uv run python main.py
