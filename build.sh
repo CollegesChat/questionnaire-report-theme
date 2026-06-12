@@ -2,7 +2,7 @@
 
 #------------------------------------------------------------------------------
 # @file
-# 精简版构建脚本 - 移除了不需要的 Node.js 依赖
+# 终极精简版构建脚本 - 使用 Hugo Extended，移除 Node.js 与 Dart Sass 依赖
 #------------------------------------------------------------------------------
 
 set -euo pipefail
@@ -19,42 +19,39 @@ trap cleanup EXIT SIGINT SIGTERM
 
 main() {
 
-  # 移除了 NODE_VERSION
-  DART_SASS_VERSION=1.100.0
+  # 依赖版本定义（已移除 DART_SASS_VERSION）
   GO_VERSION=1.26.3
   HUGO_VERSION=0.163.0
 
   export TZ=Europe/Oslo
+
+  # 创建本地自定义二进制目录
+  mkdir -p "${HOME}/.local/bin"
+
+  # 0. 安装 uv 并配置环境变量
   echo "Installing uv..."
   curl -LsSf https://astral.sh/uv/install.sh | sh
   export PATH="${HOME}/.local/bin:${PATH}"
-  # 1. 安装所需工具（跳过 Node.js）
+
+  # 1. 创建临时目录用于下载和解压工具
   build_temp_dir=$(mktemp -d)
   pushd "${build_temp_dir}" > /dev/null
-
-  mkdir -p "${HOME}/.local"
-
-  echo "Installing Dart Sass ${DART_SASS_VERSION}..."
-  curl -sLJO "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz"
-  tar -C "${HOME}/.local" -xf "dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz"
-  export PATH="${HOME}/.local/dart-sass:${PATH}"
 
   echo "Installing Go ${GO_VERSION}..."
   curl -sLJO "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz"
   tar -C "${HOME}/.local" -xf "go${GO_VERSION}.linux-amd64.tar.gz"
   export PATH="${HOME}/.local/go/bin:${PATH}"
 
-  echo "Installing Hugo ${HUGO_VERSION}..."
-  curl -sLJO "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_linux-amd64.tar.gz"
+  echo "Installing Hugo Extended ${HUGO_VERSION}..."
+  curl -sLJO "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
   mkdir -p "${HOME}/.local/hugo"
-  tar -C "${HOME}/.local/hugo" -xf "hugo_${HUGO_VERSION}_linux-amd64.tar.gz"
+  tar -C "${HOME}/.local/hugo" -xf "hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
   export PATH="${HOME}/.local/hugo:${PATH}"
 
   popd > /dev/null
 
-  # 验证依赖（移除 Node.js 验证）
+  # 验证依赖
   echo "Verifying installations..."
-  echo Dart Sass: "$(sass --version)"
   echo Go: "$(go version)"
   echo Hugo: "$(hugo version)"
 
