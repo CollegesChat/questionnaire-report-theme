@@ -2,7 +2,7 @@
 title: 问卷数据
 cascade:
   url: /universities/:slug/
-  layout: landing
+  layout: baseof_modified
 sidebar:
   hide: false
 bookCollapseSection: true

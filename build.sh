@@ -115,7 +115,7 @@ main() {
     echo "Found CF_PAGES_URL: ${CF_PAGES_URL}, overriding Hugo baseURL."
     hugo build --gc --minify -d public -b "${CF_PAGES_URL}"
   else
-    echo "CF_BASE_URL not set, using default baseURL from config file."
+    echo "CF_PAGES_URL not set, using default baseURL from config file."
     hugo build --gc --minify -d public
   fi
 
