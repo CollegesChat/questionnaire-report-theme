@@ -2,3 +2,19 @@
 
 // @import "plugins/numbered";
 // @import "plugins/scrollbars";
+.book-menu-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.old-version-link {
+  margin-top: auto;
+  color: #888;
+  margin-bottom: 1rem;
+}
+
+.back-to-home {
+  text-decoration: none;
+  color: inherit;
+}
