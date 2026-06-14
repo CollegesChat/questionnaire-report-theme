@@ -18,3 +18,14 @@
   text-decoration: none;
   color: inherit;
 }
+.book-header {
+  position: sticky;
+  top: 0px;
+  z-index: 100;
+  background-color: var(--body-background);
+}
+@media screen and (max-width: 600px) {
+  #university-name {
+    display: none;
+  }
+}
