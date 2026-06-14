@@ -118,14 +118,14 @@ main() {
     echo "CF_PAGES_URL not set, using default baseURL from config file."
     hugo build --gc --minify -d public
   fi
-
   # 7. 清理静态文件
   echo "Cleaning up output folder..."
   pushd public > /dev/null
   rm -rf asciinema katex
   rm -f mermaid.min.js
   popd > /dev/null
-
+  echo "Checking compatibility of CSS and JS..."
+  chmod +x ./checkCompatibility.sh && ./checkCompatibility.sh
   echo "Build completed successfully!"
 }
 

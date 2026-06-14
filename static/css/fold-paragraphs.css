@@ -23,6 +23,7 @@
   font-weight: bold;
   margin-bottom: 15px;
   user-select: none;
+  -webkit-user-select: none;
 }
 
 .fold-toggle-btn:hover {

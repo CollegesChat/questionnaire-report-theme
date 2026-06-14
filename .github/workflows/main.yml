@@ -68,18 +68,20 @@ jobs:
           sed -i "s#copyright: \"\$copyright\"#copyright: \"<a href='https://creativecommons.org/licenses/by-nc-sa/4.0/' target='_blank' rel='noopener'>CC BY-NC-SA 4.0</a> | Generated on ${{ env.BUILD_TIME }} (UTC+8)\"#g" hugo.yaml
       - name: Build Static Website
         run: |
-          hugo build --minify -d dist
-          cd dist
+          hugo build --minify
+          cd public
           rm -rf asciinema katex
           rm mermaid.min.js
           cd ..
+          echo "Checking compatibility of CSS and JS..."
+          chmod +x ./checkCompatibility.sh && ./checkCompatibility.sh
       - name: Setup Pages
         uses: actions/configure-pages@v6
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: './dist'
+          path: './public'
 
       - name: Deploy to GitHub Pages
         id: deployment
